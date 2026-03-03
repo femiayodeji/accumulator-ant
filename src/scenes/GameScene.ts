@@ -10,6 +10,7 @@ import { trackEvent, trackScreenView } from '../analytics/telemetry';
 export class GameScene extends Phaser.Scene {
   private static readonly LEVEL_STORAGE_KEY = 'accumulator.currentLevel';
   private static readonly MAX_LEVEL_STORAGE_KEY = 'accumulator.maxLevel';
+  private static readonly MOBILE_CONTROL_CLEARANCE = 72;
 
   private ant!: Ant;
   private sfx!: GameSfx;
@@ -203,7 +204,23 @@ export class GameScene extends Phaser.Scene {
   }
 
   private getAntBaseY(): number {
-    return this.scale.height - 68;
+    return this.scale.height - 68 - this.getBottomControlPadding();
+  }
+
+  private getBottomControlPadding(): number {
+    const touchCapable = this.sys.game.device.input.touch;
+    const smallViewport = this.scale.width <= 900 && this.scale.height <= 1100;
+    if (!touchCapable && !smallViewport) {
+      return 0;
+    }
+
+    const visualViewportInset = window.visualViewport
+      ? Math.max(0, window.innerHeight - window.visualViewport.height)
+      : 0;
+
+    const baseClearance = GameScene.MOBILE_CONTROL_CLEARANCE;
+    const maxExtra = Math.floor(this.scale.height * 0.2);
+    return Phaser.Math.Clamp(baseClearance + Math.round(visualViewportInset), 0, maxExtra);
   }
 
   private layoutUI(): void {

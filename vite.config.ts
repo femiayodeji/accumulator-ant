@@ -8,14 +8,18 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['assets/ant.png', 'assets/ants.gif', 'assets/ant-walking.gif'],
       manifest: {
+        id: '/',
         name: 'Accumulator - Discipline Through Numbers',
         short_name: 'Accumulator',
         description: 'Mobile endless math game about discipline through intentional choices.',
         theme_color: '#2c3e50',
         background_color: '#2c3e50',
         display: 'standalone',
+        display_override: ['standalone', 'minimal-ui'],
+        orientation: 'portrait',
         scope: '/',
         start_url: '/',
+        categories: ['games', 'education'],
         icons: [
           {
             src: '/assets/ant.png',
