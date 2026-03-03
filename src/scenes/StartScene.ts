@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GAME_FONT } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
+import { trackEvent, trackScreenView } from '../analytics/telemetry';
 
 export class StartScene extends Phaser.Scene {
   private static readonly LEVEL_KEY = 'accumulator.currentLevel';
@@ -14,6 +15,8 @@ export class StartScene extends Phaser.Scene {
   create(): void {
     const w = this.scale.width;
     const h = this.scale.height;
+
+    trackScreenView('StartScene');
 
     this.cameras.main.setBackgroundColor(0x2c3e50);
     this.cameras.main.fadeIn(400);
@@ -53,16 +56,19 @@ export class StartScene extends Phaser.Scene {
     this.createButton(w / 2, h * 0.68, 'PLAY', 0x27ae60, () => {
       const highestLevel = this.getHighestUnlockedLevel();
       this.saveCurrentLevel(highestLevel);
+      trackEvent('menu_play_clicked', { level: highestLevel });
       startAntsTransition(this, 'LevelScene');
     });
 
     // Levels button
     this.createButton(w / 2, h * 0.79, 'LEVELS', 0x2980b9, () => {
+      trackEvent('menu_levels_clicked');
       startAntsTransition(this, 'LevelSelectScene');
     }, true);
 
     // Philosophy button
     this.createButton(w / 2, h * 0.87, 'PHILOSOPHY', 0x8e44ad, () => {
+      trackEvent('menu_philosophy_clicked');
       startAntsTransition(this, 'PhilosophyScene');
     }, true);
 
@@ -158,6 +164,7 @@ export class StartScene extends Phaser.Scene {
       UiSfx.unlock();
       UiSfx.playClick();
       UiSfx.toggleMusicEnabled();
+      trackEvent('music_toggled', { enabled: UiSfx.isMusicEnabled() });
       musicText.setText(getLabel());
       musicText.setColor('#ecf0f1');
     });

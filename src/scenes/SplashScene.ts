@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_FONT } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
+import { trackScreenView } from '../analytics/telemetry';
 
 export class SplashScene extends Phaser.Scene {
   constructor() {
@@ -14,6 +15,8 @@ export class SplashScene extends Phaser.Scene {
   create(): void {
     const w = this.scale.width;
     const h = this.scale.height;
+
+    trackScreenView('SplashScene');
 
     this.cameras.main.setBackgroundColor(0x2c3e50);
 

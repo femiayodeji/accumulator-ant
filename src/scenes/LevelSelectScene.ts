@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GAME_FONT } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
+import { trackEvent, trackScreenView } from '../analytics/telemetry';
 
 export class LevelSelectScene extends Phaser.Scene {
   private static readonly LEVEL_KEY = 'accumulator.currentLevel';
@@ -16,11 +17,14 @@ export class LevelSelectScene extends Phaser.Scene {
     const h = this.scale.height;
     const maxLevel = this.getSavedLevel();
 
+    trackScreenView('LevelSelectScene');
+
     this.cameras.main.setBackgroundColor(0x1a252f);
     this.cameras.main.fadeIn(300);
 
     // Back button
     this.createNavButton(20, 20, '← BACK', () => {
+      trackEvent('level_select_back_clicked');
       startAntsTransition(this, 'StartScene');
     });
 
@@ -155,6 +159,7 @@ export class LevelSelectScene extends Phaser.Scene {
     hitZone.on('pointerup', () => {
       UiSfx.unlock();
       UiSfx.playClick();
+      trackEvent('level_selected', { level });
       startAntsTransition(this, 'GameScene', { level });
     });
   }

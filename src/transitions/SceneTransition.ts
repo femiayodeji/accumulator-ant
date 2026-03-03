@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { trackEvent } from '../analytics/telemetry';
 
 type TransitionScene = Phaser.Scene & {
   __antsTransitionActive?: boolean;
@@ -16,6 +17,11 @@ export function startAntsTransition(
   transitionScene.__antsTransitionActive = true;
   scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
     transitionScene.__antsTransitionActive = false;
+  });
+
+  trackEvent('scene_transition', {
+    from_scene: scene.scene.key,
+    to_scene: sceneKey,
   });
 
   const w = scene.scale.width;

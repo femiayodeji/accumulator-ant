@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GAME_FONT, DifficultySystem, LevelStatsStorage } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
+import { trackEvent, trackScreenView } from '../analytics/telemetry';
 
 export class LevelScene extends Phaser.Scene {
   private static readonly LEVEL_KEY = 'accumulator.currentLevel';
@@ -16,16 +17,20 @@ export class LevelScene extends Phaser.Scene {
     const level = this.getSavedLevel();
     const range = DifficultySystem.getNumberRange(level);
 
+    trackScreenView('LevelScene');
+
     this.cameras.main.setBackgroundColor(0x2c3e50);
     this.cameras.main.fadeIn(300);
 
     // Back button (top-left)
     this.createNavButton(20, 20, '← HOME', () => {
+      trackEvent('level_home_clicked');
       startAntsTransition(this, 'StartScene');
     });
 
     // Levels button (top-right)
     this.createNavButton(w - 20, 20, 'LEVELS ≡', () => {
+      trackEvent('level_levels_clicked');
       startAntsTransition(this, 'LevelSelectScene');
     }, true);
 
@@ -101,6 +106,7 @@ export class LevelScene extends Phaser.Scene {
 
     // GO button
     this.createGameButton(w / 2, h * 0.78, 'GO!', 0x27ae60, () => {
+      trackEvent('level_go_clicked', { level });
       startAntsTransition(this, 'GameScene', { level });
     });
 

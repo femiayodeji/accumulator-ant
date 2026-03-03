@@ -5,6 +5,7 @@ import { GameSfx } from '../audio/GameSfx';
 import { GAME_FONT, DifficultySystem, LevelStatsStorage } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
+import { trackEvent, trackScreenView } from '../analytics/telemetry';
 
 export class GameScene extends Phaser.Scene {
   private static readonly LEVEL_STORAGE_KEY = 'accumulator.currentLevel';
@@ -35,12 +36,15 @@ export class GameScene extends Phaser.Scene {
   private readonly antDragGrabRadius: number = 68;
   private collectedNumbers: number[] = [];
   private levelStartTime: number = 0;
+  private wasOverflowing: boolean = false;
   
   constructor() {
     super({ key: 'GameScene' });
   }
   
   create(data?: { level?: number; target?: number }): void {
+    trackScreenView('GameScene');
+
     // Gradient background
     this.drawGradientBackground();
     this.cameras.main.fadeIn(300);
@@ -151,6 +155,11 @@ export class GameScene extends Phaser.Scene {
     hitZone.on('pointerup', () => {
       UiSfx.unlock();
       UiSfx.playClick();
+      trackEvent('game_quit_clicked', {
+        level: this.currentLevel,
+        current_total: this.currentTotal,
+        target_total: this.targetTotal,
+      });
       startAntsTransition(this, 'LevelScene');
     });
   }
@@ -221,8 +230,10 @@ export class GameScene extends Phaser.Scene {
     this.targetTotal = fixedTarget ?? DifficultySystem.getTarget(level);
     this.spawnRate = DifficultySystem.getSpawnRate(level);
     this.levelCompleting = false;
+    this.wasOverflowing = false;
     this.collectedNumbers = [];
     this.levelStartTime = Date.now();
+    const range = DifficultySystem.getNumberRange(level);
     
     // Clear existing numbers
     this.numbers.forEach(num => num.destroy());
@@ -233,6 +244,14 @@ export class GameScene extends Phaser.Scene {
 
     // Persist latest reachable level
     this.saveCurrentLevel(level);
+
+    trackEvent('level_started', {
+      level,
+      target_total: this.targetTotal,
+      spawn_rate_ms: this.spawnRate,
+      number_min: range.min,
+      number_max: range.max,
+    });
     
     console.log(`Level ${level} started - Target: ${this.targetTotal}`);
   }
@@ -257,6 +276,25 @@ export class GameScene extends Phaser.Scene {
       this.hintText.setText(`Release: ${diff}`);
       this.hintText.setColor('#e74c3c');
     }
+
+    const isOverflowing = this.currentTotal > this.targetTotal;
+    if (!this.wasOverflowing && isOverflowing) {
+      trackEvent('overflow_entered', {
+        level: this.currentLevel,
+        current_total: this.currentTotal,
+        target_total: this.targetTotal,
+      });
+    }
+
+    if (this.wasOverflowing && !isOverflowing) {
+      trackEvent('overflow_cleared', {
+        level: this.currentLevel,
+        current_total: this.currentTotal,
+        target_total: this.targetTotal,
+      });
+    }
+
+    this.wasOverflowing = isOverflowing;
   }
   
   private spawnNumber(): void {
@@ -314,6 +352,14 @@ export class GameScene extends Phaser.Scene {
     
     // Update UI
     this.updateUI();
+
+    trackEvent('number_collected', {
+      level: this.currentLevel,
+      value: number.value,
+      current_total: this.currentTotal,
+      target_total: this.targetTotal,
+      collection_count: this.collectedNumbers.length,
+    });
     
     // Check win condition
     this.checkWinCondition();
@@ -348,6 +394,14 @@ export class GameScene extends Phaser.Scene {
     const isNewBest = LevelStatsStorage.save(
       this.currentLevel, [...this.collectedNumbers], elapsedSec, this.targetTotal,
     );
+
+    trackEvent('level_completed', {
+      level: this.currentLevel,
+      elapsed_seconds: elapsedSec,
+      number_count: this.collectedNumbers.length,
+      target_total: this.targetTotal,
+      is_new_best: isNewBest,
+    });
 
     const w = this.scale.width;
     const h = this.scale.height;
