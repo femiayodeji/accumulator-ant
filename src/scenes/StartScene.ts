@@ -141,7 +141,7 @@ export class StartScene extends Phaser.Scene {
   }
 
   private createMusicToggle(x: number, y: number): void {
-    const getLabel = (): string => `MUSIC: ${UiSfx.isMusicEnabled() ? 'ON' : 'OFF'}`;
+    const getLabel = (): string => (UiSfx.isMusicEnabled() ? 'ON : MUSIC' : 'OFF: MUSIC');
 
     const musicText = this.add.text(x, y, getLabel(), {
       fontSize: '16px',
