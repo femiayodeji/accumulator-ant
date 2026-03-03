@@ -3,6 +3,7 @@ import { GAME_FONT, DifficultySystem, LevelStatsStorage } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
 import { trackEvent, trackScreenView } from '../analytics/telemetry';
+import { registerSceneBackNavigation } from '../navigation/backNavigation';
 
 export class LevelScene extends Phaser.Scene {
   private static readonly LEVEL_KEY = 'accumulator.currentLevel';
@@ -18,6 +19,7 @@ export class LevelScene extends Phaser.Scene {
     const range = DifficultySystem.getNumberRange(level);
 
     trackScreenView('LevelScene');
+    registerSceneBackNavigation(this, { fallbackScene: 'StartScene' });
 
     this.cameras.main.setBackgroundColor(0x2c3e50);
     this.cameras.main.fadeIn(300);

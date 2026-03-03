@@ -44,17 +44,17 @@ export function startAntsTransition(
   scene.tweens.add({
     targets: overlay,
     alpha: 0.35,
-    duration: 180,
+    duration: 280,
     ease: 'Power2',
   });
 
   scene.tweens.add({
     targets: antsDom,
     alpha: 1,
-    duration: 250,
+    duration: 420,
     ease: 'Power2',
     onComplete: () => {
-      scene.time.delayedCall(280, () => {
+      scene.time.delayedCall(520, () => {
         overlay.destroy();
         antsDom.destroy();
         transitionScene.__antsTransitionActive = false;

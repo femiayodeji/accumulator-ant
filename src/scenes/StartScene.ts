@@ -3,6 +3,7 @@ import { GAME_FONT } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
 import { trackEvent, trackScreenView } from '../analytics/telemetry';
+import { registerSceneBackNavigation } from '../navigation/backNavigation';
 
 export class StartScene extends Phaser.Scene {
   private static readonly LEVEL_KEY = 'accumulator.currentLevel';
@@ -17,6 +18,7 @@ export class StartScene extends Phaser.Scene {
     const h = this.scale.height;
 
     trackScreenView('StartScene');
+    registerSceneBackNavigation(this, { replaceHistoryEntry: true });
 
     this.cameras.main.setBackgroundColor(0x2c3e50);
     this.cameras.main.fadeIn(400);

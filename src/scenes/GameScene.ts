@@ -6,6 +6,7 @@ import { GAME_FONT, DifficultySystem, LevelStatsStorage } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
 import { trackEvent, trackScreenView } from '../analytics/telemetry';
+import { registerSceneBackNavigation } from '../navigation/backNavigation';
 
 export class GameScene extends Phaser.Scene {
   private static readonly LEVEL_STORAGE_KEY = 'accumulator.currentLevel';
@@ -45,6 +46,7 @@ export class GameScene extends Phaser.Scene {
   
   create(data?: { level?: number; target?: number }): void {
     trackScreenView('GameScene');
+    registerSceneBackNavigation(this, { fallbackScene: 'LevelScene' });
 
     // Gradient background
     this.drawGradientBackground();

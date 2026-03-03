@@ -3,6 +3,7 @@ import { GAME_FONT } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
 import { trackEvent, trackScreenView } from '../analytics/telemetry';
+import { registerSceneBackNavigation } from '../navigation/backNavigation';
 
 export class PhilosophyScene extends Phaser.Scene {
   private contentContainer!: Phaser.GameObjects.Container;
@@ -20,6 +21,7 @@ export class PhilosophyScene extends Phaser.Scene {
     const h = this.scale.height;
 
     trackScreenView('PhilosophyScene');
+    registerSceneBackNavigation(this, { fallbackScene: 'StartScene' });
 
     this.cameras.main.setBackgroundColor(0x1a252f);
     this.cameras.main.fadeIn(300);

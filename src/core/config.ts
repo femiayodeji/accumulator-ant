@@ -23,7 +23,7 @@ export const GameConfig = {
   
   // Ant configuration
   ant: {
-    baseSpeed: 200,
+    baseSpeed: 230,
     size: 40,
     startX: 187.5, // Center of screen
     startY: 600,
@@ -50,7 +50,7 @@ export class DifficultySystem {
   }
   
   static getNumberRange(level: number): { min: number; max: number } {
-    const maxValue = Math.min(3 + Math.floor(level / 5), 15);
+    const maxValue = Math.min(4 + Math.floor(level / 3), 24);
     return { min: -maxValue, max: maxValue };
   }
   

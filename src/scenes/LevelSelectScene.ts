@@ -3,6 +3,7 @@ import { GAME_FONT } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
 import { trackEvent, trackScreenView } from '../analytics/telemetry';
+import { registerSceneBackNavigation } from '../navigation/backNavigation';
 
 export class LevelSelectScene extends Phaser.Scene {
   private static readonly LEVEL_KEY = 'accumulator.currentLevel';
@@ -18,6 +19,7 @@ export class LevelSelectScene extends Phaser.Scene {
     const maxLevel = this.getSavedLevel();
 
     trackScreenView('LevelSelectScene');
+    registerSceneBackNavigation(this, { fallbackScene: 'StartScene' });
 
     this.cameras.main.setBackgroundColor(0x1a252f);
     this.cameras.main.fadeIn(300);

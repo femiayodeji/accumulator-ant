@@ -1,6 +1,7 @@
 {
   "name": "accumulator-game",
   "version": "1.0.0",
+  "type": "module",
   "description": "Mobile endless math game with philosophical depth",
   "main": "index.js",
   "scripts": {
