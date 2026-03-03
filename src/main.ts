@@ -6,6 +6,7 @@ import { LevelSelectScene } from './scenes/LevelSelectScene';
 import { LevelScene } from './scenes/LevelScene';
 import { GameScene } from './scenes/GameScene';
 import { registerPwa } from './pwa/registerPwa';
+import { initGoogleIntegrations } from './analytics/telemetry';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -31,5 +32,6 @@ const config: Phaser.Types.Core.GameConfig = {
   },
 };
 
+initGoogleIntegrations();
 new Phaser.Game(config);
 registerPwa();
