@@ -10,6 +10,8 @@ export class SplashScene extends Phaser.Scene {
 
   preload(): void {
     this.load.image('ant-logo', 'assets/ant.png');
+    this.load.image('ant-gameplay', 'assets/ant1.png');
+    this.load.image('leaf-number', 'assets/leaf.png');
   }
 
   create(): void {

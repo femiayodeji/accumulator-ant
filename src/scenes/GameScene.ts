@@ -114,18 +114,18 @@ export class GameScene extends Phaser.Scene {
     
     // Current total (above ant)
     this.currentText = this.add.text(this.scale.width / 2, this.scale.height - 110, 'CURRENT: 0', {
-      fontSize: '28px',
+      fontSize: '20px',
       fontFamily: GAME_FONT,
       color: '#ff4757',
       fontStyle: 'bold',
       stroke: '#3d0c0c',
-      strokeThickness: 3,
+      strokeThickness: 2,
     });
     this.currentText.setOrigin(0.5, 0.5);
     
     // Hint text (dynamic guidance)
     this.hintText = this.add.text(this.scale.width / 2, this.scale.height - 70, '', {
-      fontSize: '18px',
+      fontSize: '14px',
       fontFamily: GAME_FONT,
       color: '#34495e',
       fontStyle: 'bold',
@@ -234,8 +234,8 @@ export class GameScene extends Phaser.Scene {
 
     this.targetText.setPosition(20, 50);
     this.levelText.setPosition(width - 20, 20);
-    this.currentText.setPosition(width / 2, antBaseY - 80);
-    this.hintText.setPosition(width / 2, antBaseY - 45);
+    this.currentText.setPosition(width / 2, this.scale.height / 2 - 18);
+    this.hintText.setPosition(width / 2, this.scale.height / 2 + 10);
   }
 
   private handleResize(gameSize: Phaser.Structs.Size): void {

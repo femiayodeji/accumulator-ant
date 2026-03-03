@@ -4,13 +4,9 @@ import { GameConfig } from '../core/config';
 export type AntState = 'seeking' | 'balanced' | 'burdened';
 
 export class Ant extends Phaser.GameObjects.Container {
-  private abdomen!: Phaser.GameObjects.Ellipse;
-  private head!: Phaser.GameObjects.Arc;
+  private antSprite!: Phaser.GameObjects.Image;
   private sack!: Phaser.GameObjects.Ellipse;
-  private leftAntenna!: Phaser.GameObjects.Line;
-  private rightAntenna!: Phaser.GameObjects.Line;
-  private leftEye!: Phaser.GameObjects.Arc;
-  private rightEye!: Phaser.GameObjects.Arc;
+  private antBaseScale: number = 0.32;
   
   private currentState: AntState = 'seeking';
   public baseSpeed: number = GameConfig.ant.baseSpeed;
@@ -25,66 +21,21 @@ export class Ant extends Phaser.GameObjects.Container {
     
     this.createAntParts();
     scene.add.existing(this);
-    this.setSize(60, 40);
+    this.setSize(172, 126);
   }
   
   private createAntParts(): void {
-    // Abdomen (back section)
-    this.abdomen = this.scene.add.ellipse(15, 0, 36, 28, GameConfig.colors.antBody);
-    this.abdomen.setStrokeStyle(2, GameConfig.colors.antHead);
-    this.add(this.abdomen);
-    
-    // Sack on back
-    this.sack = this.scene.add.ellipse(20, -5, 24, 20, 0xD2B48C);
+    this.antSprite = this.scene.add.image(0, -4, 'ant-gameplay');
+    this.antSprite.setOrigin(0.5, 0.5);
+    this.antSprite.setScale(this.antBaseScale);
+    this.antSprite.setAngle(0);
+    this.antSprite.setAlpha(0.98);
+    this.add(this.antSprite);
+
+    const sackFill = this.shadeColor(GameConfig.colors.antBody, -6);
+    this.sack = this.scene.add.ellipse(0, -2, 16, 12, sackFill, 0.9);
     this.sack.setStrokeStyle(2, GameConfig.colors.sackSeeking);
     this.add(this.sack);
-    
-    // Thorax (middle section)
-    const thorax = this.scene.add.ellipse(-5, 0, 24, 20, GameConfig.colors.antBody);
-    thorax.setStrokeStyle(2, GameConfig.colors.antHead);
-    this.add(thorax);
-    
-    // Head
-    this.head = this.scene.add.circle(-20, 0, 12, GameConfig.colors.antHead);
-    this.add(this.head);
-    
-    // Antennae
-    this.leftAntenna = this.scene.add.line(0, 0, -22, -8, -35, -22, GameConfig.colors.antHead);
-    this.leftAntenna.setLineWidth(2.5);
-    this.leftAntenna.setOrigin(0, 0);
-    this.add(this.leftAntenna);
-    
-    this.rightAntenna = this.scene.add.line(0, 0, -18, -8, -28, -22, GameConfig.colors.antHead);
-    this.rightAntenna.setLineWidth(2.5);
-    this.rightAntenna.setOrigin(0, 0);
-    this.add(this.rightAntenna);
-    
-    // Eyes
-    const leftEyeWhite = this.scene.add.circle(-23, -2, 6, 0xffffff);
-    const rightEyeWhite = this.scene.add.circle(-17, -2, 6, 0xffffff);
-    this.add(leftEyeWhite);
-    this.add(rightEyeWhite);
-    
-    this.leftEye = this.scene.add.circle(-23, -2, 3, 0x2c3e50);
-    this.rightEye = this.scene.add.circle(-17, -2, 3, 0x2c3e50);
-    this.add(this.leftEye);
-    this.add(this.rightEye);
-    
-    // Legs (simplified)
-    const legs = [
-      [-15, 10, -20, 20],
-      [-8, 10, -10, 20],
-      [0, 10, 0, 20],
-      [8, 10, 10, 20],
-      [15, 10, 18, 20],
-    ];
-    
-    legs.forEach(([x1, y1, x2, y2]) => {
-      const leg = this.scene.add.line(0, 0, x1, y1, x2, y2, GameConfig.colors.antHead);
-      leg.setLineWidth(3);
-      leg.setOrigin(0, 0);
-      this.add(leg);
-    });
   }
   
   updateState(current: number, target: number): void {
@@ -111,24 +62,21 @@ export class Ant extends Phaser.GameObjects.Container {
         this.currentSpeed = this.baseSpeed * 0.9;
         this.setAntennaAngle(-40);
         this.applyVerticalOffset(-5);
+        this.antSprite.setScale(this.antBaseScale * 0.99);
         break;
         
       case 'seeking':
         this.currentSpeed = this.baseSpeed;
         this.setAntennaAngle(-35);
         this.applyVerticalOffset(2);
-        // Wide eyes
-        this.leftEye.setRadius(4);
-        this.rightEye.setRadius(4);
+        this.antSprite.setScale(this.antBaseScale);
         break;
         
       case 'burdened':
         this.currentSpeed = this.baseSpeed * 0.5;
         this.setAntennaAngle(-10);
         this.applyVerticalOffset(10);
-        // Squinting eyes
-        this.leftEye.setRadius(2);
-        this.rightEye.setRadius(2);
+        this.antSprite.setScale(this.antBaseScale * 1.03);
         break;
     }
   }
@@ -138,27 +86,15 @@ export class Ant extends Phaser.GameObjects.Container {
   }
   
   private setAntennaAngle(angle: number): void {
-    const angleRad = Phaser.Math.DegToRad(angle);
-    const length = 18;
-    
-    this.leftAntenna.setTo(
-      -22, -8,
-      -22 + Math.cos(angleRad - 0.2) * length,
-      -8 + Math.sin(angleRad - 0.2) * length
-    );
-    
-    this.rightAntenna.setTo(
-      -18, -8,
-      -18 + Math.cos(angleRad + 0.2) * length,
-      -8 + Math.sin(angleRad + 0.2) * length
-    );
+    void angle;
   }
   
   private updateSackVisual(current: number, target: number): void {
     const ratio = target > 0 ? current / target : 1;
     const scale = Math.max(0.4, Math.min(ratio, 1.8));
     
-    this.sack.setScale(scale);
+    this.sack.setScale(scale * 0.95);
+    this.sack.setPosition((scale - 1) * 1, -2 + (scale - 1) * 2);
     
     // Color based on state
     let color: number;
@@ -176,6 +112,15 @@ export class Ant extends Phaser.GameObjects.Container {
     if (this.currentState === 'balanced') {
       this.sack.setStrokeStyle(4, color);
     }
+  }
+
+  private shadeColor(color: number, amount: number): number {
+    const rgb = Phaser.Display.Color.IntegerToRGB(color);
+    const clamp = (value: number): number => Phaser.Math.Clamp(value, 0, 255);
+    const r = clamp(rgb.r + amount);
+    const g = clamp(rgb.g + amount);
+    const b = clamp(rgb.b + amount);
+    return Phaser.Display.Color.GetColor(r, g, b);
   }
   
   moveLeft(delta: number): void {

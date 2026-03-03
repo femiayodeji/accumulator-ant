@@ -36,6 +36,14 @@ export const GameConfig = {
     minX: 50,
     maxX: 325,
   },
+
+  transitions: {
+    ants: {
+      overlayFadeMs: 420,
+      antsFadeInMs: 780,
+      holdBeforeSwitchMs: 920,
+    },
+  },
 };
 
 // Difficulty formulas for endless progression

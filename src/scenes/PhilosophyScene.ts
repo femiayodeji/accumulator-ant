@@ -61,6 +61,36 @@ export class PhilosophyScene extends Phaser.Scene {
     this.contentContainer.add(lineGfx);
     yPos += 20;
 
+    // Opening philosophy
+    const quote = this.add.text(w / 2, yPos, '"Life as a System of Choices"', {
+      fontSize: '18px',
+      fontFamily: GAME_FONT,
+      color: '#f39c12',
+      fontStyle: 'bold',
+      align: 'center',
+      wordWrap: { width: textWidth },
+    });
+    quote.setOrigin(0.5, 0);
+    this.contentContainer.add(quote);
+    yPos += quote.height + 12;
+
+    const quoteBody = this.add.text(w / 2, yPos, [
+      'The ant represents the individual navigating',
+      'life\'s experiences. True resilience means having',
+      'the discipline to accept only what aligns with',
+      'your purpose — neither more nor less.',
+    ].join('\n'), {
+      fontSize: '14px',
+      fontFamily: GAME_FONT,
+      color: '#95a5a6',
+      align: 'center',
+      lineSpacing: 5,
+      wordWrap: { width: textWidth },
+    });
+    quoteBody.setOrigin(0.5, 0);
+    this.contentContainer.add(quoteBody);
+    yPos += quoteBody.height + 24;
+
     // ── Educational Goals ──
     yPos = this.addHeading('🎓 Educational Goals', w / 2, yPos, '#3498db', '22px');
     yPos += 8;
@@ -100,35 +130,7 @@ export class PhilosophyScene extends Phaser.Scene {
     yPos = this.addCardList(coreInsights, margin, yPos, textWidth, '#d68910');
     yPos += 30;
 
-    // Closing quote
-    const quote = this.add.text(w / 2, yPos, '"Life as a System of Choices"', {
-      fontSize: '18px',
-      fontFamily: GAME_FONT,
-      color: '#f39c12',
-      fontStyle: 'bold',
-      align: 'center',
-      wordWrap: { width: textWidth },
-    });
-    quote.setOrigin(0.5, 0);
-    this.contentContainer.add(quote);
-    yPos += quote.height + 12;
-
-    const quoteBody = this.add.text(w / 2, yPos, [
-      'The ant represents the individual navigating',
-      'life\'s experiences. True resilience means having',
-      'the discipline to accept only what aligns with',
-      'your purpose — neither more nor less.',
-    ].join('\n'), {
-      fontSize: '14px',
-      fontFamily: GAME_FONT,
-      color: '#95a5a6',
-      align: 'center',
-      lineSpacing: 5,
-      wordWrap: { width: textWidth },
-    });
-    quoteBody.setOrigin(0.5, 0);
-    this.contentContainer.add(quoteBody);
-    yPos += quoteBody.height + 60;
+    yPos += 60;
 
     // Calculate scroll bounds
     this.maxScroll = Math.max(0, yPos - h);

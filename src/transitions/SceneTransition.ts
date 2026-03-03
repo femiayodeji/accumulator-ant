@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { trackEvent } from '../analytics/telemetry';
+import { GameConfig } from '../core/config';
 
 type TransitionScene = Phaser.Scene & {
   __antsTransitionActive?: boolean;
@@ -44,17 +45,17 @@ export function startAntsTransition(
   scene.tweens.add({
     targets: overlay,
     alpha: 0.35,
-    duration: 280,
+    duration: GameConfig.transitions.ants.overlayFadeMs,
     ease: 'Power2',
   });
 
   scene.tweens.add({
     targets: antsDom,
     alpha: 1,
-    duration: 420,
+    duration: GameConfig.transitions.ants.antsFadeInMs,
     ease: 'Power2',
     onComplete: () => {
-      scene.time.delayedCall(520, () => {
+      scene.time.delayedCall(GameConfig.transitions.ants.holdBeforeSwitchMs, () => {
         overlay.destroy();
         antsDom.destroy();
         transitionScene.__antsTransitionActive = false;
