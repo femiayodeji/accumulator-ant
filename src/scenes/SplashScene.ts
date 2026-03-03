@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
-import { GAME_FONT } from './config';
-import { startAntsTransition } from './SceneTransition';
+import { GAME_FONT } from '../core/config';
+import { startAntsTransition } from '../transitions/SceneTransition';
 
 export class SplashScene extends Phaser.Scene {
   constructor() {

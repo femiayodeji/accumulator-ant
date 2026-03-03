@@ -1,7 +1,49 @@
 import { defineConfig } from 'vite';
 import path from 'path';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  plugins: [
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['assets/ant.png', 'assets/ants.gif', 'assets/ant-walking.gif'],
+      manifest: {
+        name: 'Accumulator - Discipline Through Numbers',
+        short_name: 'Accumulator',
+        description: 'Mobile endless math game about discipline through intentional choices.',
+        theme_color: '#2c3e50',
+        background_color: '#2c3e50',
+        display: 'standalone',
+        scope: '/',
+        start_url: '/',
+        icons: [
+          {
+            src: '/assets/ant.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: '/assets/ant.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+          {
+            src: '/assets/ant.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+        ],
+      },
+      workbox: {
+        navigateFallback: '/index.html',
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,gif,woff2}'],
+      },
+      devOptions: {
+        enabled: true,
+      },
+    }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

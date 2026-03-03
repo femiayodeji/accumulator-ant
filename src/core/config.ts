@@ -64,10 +64,6 @@ export class DifficultySystem {
     // Milliseconds between spawns
     return Math.max(1600 - (level * 35), 600);
   }
-  
-  static getSimultaneousCount(level: number): number {
-    return Math.min(1 + Math.floor(level / 10), 4);
-  }
 }
 
 // ── Per-level stats persistence ──
@@ -120,9 +116,5 @@ export class LevelStatsStorage {
     const parts = numbers.map(n => (n >= 0 ? `+${n}` : `${n}`));
     if (parts.length <= 12) return parts.join(', ');
     return parts.slice(0, 5).join(', ') + ', …, ' + parts.slice(-3).join(', ');
-  }
-
-  static formatTime(seconds: number): string {
-    return `${seconds.toFixed(1)}s`;
   }
 }

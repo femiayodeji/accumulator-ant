@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
-import { GAME_FONT } from './config';
-import { startAntsTransition } from './SceneTransition';
-import { UiSfx } from './UiSfx';
+import { GAME_FONT } from '../core/config';
+import { startAntsTransition } from '../transitions/SceneTransition';
+import { UiSfx } from '../audio/UiSfx';
 
 export class StartScene extends Phaser.Scene {
   private static readonly LEVEL_KEY = 'accumulator.currentLevel';
@@ -46,6 +46,8 @@ export class StartScene extends Phaser.Scene {
       lineSpacing: 6,
     });
     about.setOrigin(0.5);
+
+    this.createMusicToggle(w - 20, 20);
 
     // Play button
     this.createButton(w / 2, h * 0.68, 'PLAY', 0x27ae60, () => {
@@ -135,6 +137,29 @@ export class StartScene extends Phaser.Scene {
       UiSfx.unlock();
       UiSfx.playClick();
       onClick();
+    });
+  }
+
+  private createMusicToggle(x: number, y: number): void {
+    const getLabel = (): string => `MUSIC: ${UiSfx.isMusicEnabled() ? 'ON' : 'OFF'}`;
+
+    const musicText = this.add.text(x, y, getLabel(), {
+      fontSize: '16px',
+      fontFamily: GAME_FONT,
+      color: '#ecf0f1',
+      fontStyle: 'bold',
+    });
+    musicText.setOrigin(1, 0);
+    musicText.setInteractive({ useHandCursor: true });
+
+    musicText.on('pointerover', () => musicText.setColor('#f39c12'));
+    musicText.on('pointerout', () => musicText.setColor('#ecf0f1'));
+    musicText.on('pointerup', () => {
+      UiSfx.unlock();
+      UiSfx.playClick();
+      UiSfx.toggleMusicEnabled();
+      musicText.setText(getLabel());
+      musicText.setColor('#ecf0f1');
     });
   }
 

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_FONT, GameConfig } from './config';
+import { GAME_FONT, GameConfig } from '../core/config';
 
 export class FallingNumber extends Phaser.GameObjects.Container {
   public value: number;

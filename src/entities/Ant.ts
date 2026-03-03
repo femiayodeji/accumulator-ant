@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GameConfig } from './config';
+import { GameConfig } from '../core/config';
 
 export type AntState = 'seeking' | 'balanced' | 'burdened';
 

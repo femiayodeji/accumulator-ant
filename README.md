@@ -18,12 +18,14 @@ Control an ant that catches falling numbers (+/-) to reach an exact target sum. 
 - ✅ **Dynamic Difficulty**: Formulas adjust target, speed, number range per level
 - ✅ **Progress Persistence**: Current level saved in localStorage
 - ✅ **Sound Effects**: Procedural collect and level-complete audio cues
+- ✅ **PWA Ready**: Installable app with offline caching via service worker
 
 ## Tech Stack
 
 - **Phaser 3.70**: Game engine
 - **TypeScript 5.3**: Language
 - **Vite**: Build tool and dev server
+- **vite-plugin-pwa**: Manifest + service worker generation
 
 ## Getting Started
 
@@ -94,11 +96,26 @@ Output in `dist/` folder.
 ```
 accumulator-game/
 ├── src/
-│   ├── main.ts          # Entry point
-│   ├── config.ts        # Game constants and difficulty formulas
-│   ├── GameScene.ts     # Main game scene
-│   ├── Ant.ts           # Player character
-│   └── FallingNumber.ts # Collectible numbers
+│   ├── main.ts
+│   ├── pwa/
+│   │   └── registerPwa.ts
+│   ├── core/
+│   │   └── config.ts
+│   ├── entities/
+│   │   ├── Ant.ts
+│   │   └── FallingNumber.ts
+│   ├── audio/
+│   │   ├── GameSfx.ts
+│   │   └── UiSfx.ts
+│   ├── transitions/
+│   │   └── SceneTransition.ts
+│   └── scenes/
+│       ├── SplashScene.ts
+│       ├── StartScene.ts
+│       ├── PhilosophyScene.ts
+│       ├── LevelSelectScene.ts
+│       ├── LevelScene.ts
+│       └── GameScene.ts
 ├── index.html           # HTML entry
 ├── package.json         # Dependencies
 ├── tsconfig.json        # TypeScript config

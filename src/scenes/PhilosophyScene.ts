@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
-import { GAME_FONT } from './config';
-import { startAntsTransition } from './SceneTransition';
-import { UiSfx } from './UiSfx';
+import { GAME_FONT } from '../core/config';
+import { startAntsTransition } from '../transitions/SceneTransition';
+import { UiSfx } from '../audio/UiSfx';
 
 export class PhilosophyScene extends Phaser.Scene {
   private contentContainer!: Phaser.GameObjects.Container;

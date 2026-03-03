@@ -1,10 +1,10 @@
 import Phaser from 'phaser';
-import { Ant } from './Ant';
-import { FallingNumber } from './FallingNumber';
-import { GameSfx } from './GameSfx';
-import { GAME_FONT, DifficultySystem, LevelStatsStorage } from './config';
-import { startAntsTransition } from './SceneTransition';
-import { UiSfx } from './UiSfx';
+import { Ant } from '../entities/Ant';
+import { FallingNumber } from '../entities/FallingNumber';
+import { GameSfx } from '../audio/GameSfx';
+import { GAME_FONT, DifficultySystem, LevelStatsStorage } from '../core/config';
+import { startAntsTransition } from '../transitions/SceneTransition';
+import { UiSfx } from '../audio/UiSfx';
 
 export class GameScene extends Phaser.Scene {
   private static readonly LEVEL_STORAGE_KEY = 'accumulator.currentLevel';

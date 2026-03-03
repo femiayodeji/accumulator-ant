@@ -10,14 +10,6 @@ export class GameSfx {
     }
   }
 
-  playCollect(value: number): void {
-    if (value >= 0) {
-      this.playTopUp();
-    } else {
-      this.playTopDown();
-    }
-  }
-
   playTopUp(): void {
     const context = this.getActiveContext();
     if (!context) return;

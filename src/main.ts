@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
-import { SplashScene } from './SplashScene';
-import { StartScene } from './StartScene';
-import { PhilosophyScene } from './PhilosophyScene';
-import { LevelSelectScene } from './LevelSelectScene';
-import { LevelScene } from './LevelScene';
-import { GameScene } from './GameScene';
+import { SplashScene } from './scenes/SplashScene';
+import { StartScene } from './scenes/StartScene';
+import { PhilosophyScene } from './scenes/PhilosophyScene';
+import { LevelSelectScene } from './scenes/LevelSelectScene';
+import { LevelScene } from './scenes/LevelScene';
+import { GameScene } from './scenes/GameScene';
+import { registerPwa } from './pwa/registerPwa';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -31,3 +32,4 @@ const config: Phaser.Types.Core.GameConfig = {
 };
 
 new Phaser.Game(config);
+registerPwa();
