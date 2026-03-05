@@ -462,6 +462,7 @@ export class GameScene extends Phaser.Scene {
   private collectNumber(number: FallingNumber, index: number): void {
     this.currentTotal += number.value;
     this.collectedNumbers.push(number.value);
+    this.ant.playCatchImpact();
     if (number.value >= 0) {
       this.sfx.playTopUp();
     } else {

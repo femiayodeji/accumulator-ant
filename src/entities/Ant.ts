@@ -7,6 +7,7 @@ export class Ant extends Phaser.GameObjects.Container {
   private antSprite!: Phaser.GameObjects.Image;
   private sack!: Phaser.GameObjects.Ellipse;
   private antBaseScale: number = 0.32;
+  private catchImpactTween?: Phaser.Tweens.Tween;
   
   private currentState: AntState = 'seeking';
   public baseSpeed: number = GameConfig.ant.baseSpeed;
@@ -150,5 +151,24 @@ export class Ant extends Phaser.GameObjects.Container {
   
   getState(): AntState {
     return this.currentState;
+  }
+
+  playCatchImpact(): void {
+    this.catchImpactTween?.stop();
+    this.scene.tweens.killTweensOf(this);
+    this.setScale(1, 1);
+
+    this.catchImpactTween = this.scene.tweens.add({
+      targets: this,
+      scaleX: 1.2,
+      scaleY: 0.8,
+      duration: 72,
+      ease: 'Cubic.easeOut',
+      hold: 16,
+      yoyo: true,
+      onComplete: () => {
+        this.setScale(1, 1);
+      },
+    });
   }
 }
