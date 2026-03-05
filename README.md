@@ -55,21 +55,19 @@ npm run build
 
 Output in `dist/` folder.
 
-## Google Analytics + AdSense Setup
+## Google Analytics Setup
 
 1. Copy `.env.example` to `.env`.
 2. Add your IDs:
 
 ```bash
 VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-VITE_ADSENSE_CLIENT=ca-pub-XXXXXXXXXXXXXXXX
 ```
 
 3. Restart dev server (`npm run dev`) or rebuild (`npm run build`).
 
 Notes:
 - `VITE_GA_MEASUREMENT_ID` is your GA4 Measurement ID (format: `G-...`).
-- `VITE_ADSENSE_CLIENT` is your AdSense publisher client ID (format: `ca-pub-...`).
 
 Tracked GA events:
 - `game_session_start`
@@ -79,7 +77,6 @@ Tracked GA events:
 - `music_toggled`
 - `level_selected`, `level_go_clicked`, `level_started`, `number_collected`
 - `overflow_entered`, `overflow_cleared`, `level_completed`, `game_quit_clicked`
-- `adsense_initialized`
 
 ## Game Controls
 

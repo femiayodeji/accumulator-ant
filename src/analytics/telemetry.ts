@@ -24,7 +24,6 @@ function appendScriptOnce(src: string, attrs: Record<string, string> = {}): void
 
 export function initGoogleIntegrations(): void {
   const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim();
-  const adsenseClient = import.meta.env.VITE_ADSENSE_CLIENT?.trim();
   const isDev = import.meta.env.DEV;
 
   if (gaMeasurementId) {
@@ -50,24 +49,6 @@ export function initGoogleIntegrations(): void {
     console.info('[analytics] GA4 disabled. Set VITE_GA_MEASUREMENT_ID to enable tracking.');
   }
 
-  if (adsenseClient) {
-    let adsMeta = document.querySelector('meta[name="google-adsense-account"]');
-    if (!adsMeta) {
-      adsMeta = document.createElement('meta');
-      adsMeta.setAttribute('name', 'google-adsense-account');
-      document.head.appendChild(adsMeta);
-    }
-    adsMeta.setAttribute('content', adsenseClient);
-
-    appendScriptOnce(
-      `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`,
-      { crossorigin: 'anonymous' },
-    );
-
-    trackEvent('adsense_initialized', {
-      has_client: true,
-    });
-  }
 }
 
 export function trackEvent(eventName: string, params: AnalyticsParams = {}): void {
