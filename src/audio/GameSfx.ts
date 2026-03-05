@@ -94,6 +94,29 @@ export class GameSfx {
     });
   }
 
+  playEquilibriumChime(): void {
+    const context = this.getActiveContext();
+    if (!context) return;
+
+    this.playTone(context, {
+      frequency: 740,
+      duration: 0.07,
+      type: 'triangle',
+      gain: 0.045,
+      slideTo: 860,
+      offset: 0,
+    });
+
+    this.playTone(context, {
+      frequency: 980,
+      duration: 0.08,
+      type: 'sine',
+      gain: 0.04,
+      slideTo: 1080,
+      offset: 0.06,
+    });
+  }
+
   destroy(): void {
     if (!this.audioContext) return;
 

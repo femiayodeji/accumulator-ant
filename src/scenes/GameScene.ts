@@ -23,6 +23,7 @@ export class GameScene extends Phaser.Scene {
   
   private targetText!: Phaser.GameObjects.Text;
   private currentText!: Phaser.GameObjects.Text;
+  private equilibriumCheckText!: Phaser.GameObjects.Text;
   private levelText!: Phaser.GameObjects.Text;
   private hintText!: Phaser.GameObjects.Text;
   
@@ -39,6 +40,7 @@ export class GameScene extends Phaser.Scene {
   private collectedNumbers: number[] = [];
   private levelStartTime: number = 0;
   private wasOverflowing: boolean = false;
+  private wasAligned: boolean = false;
   
   constructor() {
     super({ key: 'GameScene' });
@@ -122,6 +124,17 @@ export class GameScene extends Phaser.Scene {
       strokeThickness: 2,
     });
     this.currentText.setOrigin(0.5, 0.5);
+
+    this.equilibriumCheckText = this.add.text(this.scale.width / 2 + 84, this.scale.height - 110, '✔', {
+      fontSize: '28px',
+      fontFamily: GAME_FONT,
+      color: '#2ecc71',
+      fontStyle: 'bold',
+      stroke: '#145a32',
+      strokeThickness: 3,
+    });
+    this.equilibriumCheckText.setOrigin(0.5, 0.5);
+    this.equilibriumCheckText.setVisible(false);
     
     // Hint text (dynamic guidance)
     this.hintText = this.add.text(this.scale.width / 2, this.scale.height - 70, '', {
@@ -235,7 +248,8 @@ export class GameScene extends Phaser.Scene {
     this.targetText.setPosition(20, 50);
     this.levelText.setPosition(width - 20, 20);
     this.currentText.setPosition(width / 2, this.scale.height / 2 - 18);
-    this.hintText.setPosition(width / 2, this.scale.height / 2 + 10);
+    this.hintText.setPosition(this.currentText.x, this.currentText.y + 28);
+    this.equilibriumCheckText.setPosition(this.currentText.x + this.currentText.width / 2 + 24, this.currentText.y);
   }
 
   private handleResize(gameSize: Phaser.Structs.Size): void {
@@ -250,6 +264,7 @@ export class GameScene extends Phaser.Scene {
     this.spawnRate = DifficultySystem.getSpawnRate(level);
     this.levelCompleting = false;
     this.wasOverflowing = false;
+    this.wasAligned = false;
     this.collectedNumbers = [];
     this.levelStartTime = Date.now();
     const range = DifficultySystem.getNumberRange(level);
@@ -279,13 +294,19 @@ export class GameScene extends Phaser.Scene {
     this.targetText.setText(`TARGET: ${this.targetTotal}`);
     this.currentText.setText(`CURRENT: ${this.currentTotal}`);
     this.levelText.setText(`LEVEL ${this.currentLevel}`);
+
+    const checkX = this.currentText.x + this.currentText.width / 2 + 24;
+    const checkY = this.currentText.y;
+    this.equilibriumCheckText.setPosition(checkX, checkY);
+    this.hintText.setPosition(this.currentText.x, this.currentText.y + 28);
     
     // Update ant state
     this.ant.updateState(this.currentTotal, this.targetTotal);
     
     // Update hint text
     const diff = this.targetTotal - this.currentTotal;
-    if (diff === 0) {
+    const isAligned = diff === 0;
+    if (isAligned) {
       this.hintText.setText('ALIGNED! 🎯');
       this.hintText.setColor('#27ae60');
     } else if (diff > 0) {
@@ -295,6 +316,29 @@ export class GameScene extends Phaser.Scene {
       this.hintText.setText(`Release: ${diff}`);
       this.hintText.setColor('#e74c3c');
     }
+
+    if (isAligned) {
+      this.equilibriumCheckText.setVisible(true);
+      if (!this.wasAligned) {
+        this.equilibriumCheckText.setScale(0.65);
+        this.equilibriumCheckText.setAlpha(0.6);
+        this.tweens.add({
+          targets: this.equilibriumCheckText,
+          scale: 1,
+          alpha: 1,
+          ease: 'Back.easeOut',
+          duration: 240,
+        });
+        this.sfx.playEquilibriumChime();
+        this.spawnEquilibriumBurst(checkX, checkY);
+      }
+    } else {
+      this.equilibriumCheckText.setVisible(false);
+      this.equilibriumCheckText.setAlpha(1);
+      this.equilibriumCheckText.setScale(1);
+    }
+
+    this.wasAligned = isAligned;
 
     const isOverflowing = this.currentTotal > this.targetTotal;
     if (!this.wasOverflowing && isOverflowing) {
@@ -314,6 +358,69 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.wasOverflowing = isOverflowing;
+  }
+
+  private spawnEquilibriumBurst(x: number, y: number): void {
+    const colors = [0x2ecc71, 0x58d68d, 0x27ae60, 0x82e0aa, 0xc8f7c5];
+    const emitWave = (count: number, minDistance: number, maxDistance: number): void => {
+      for (let i = 0; i < count; i++) {
+        const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
+        const distance = Phaser.Math.Between(minDistance, maxDistance);
+        const size = Phaser.Math.Between(4, 9);
+        const color = Phaser.Utils.Array.GetRandom(colors);
+        const tx = x + Math.cos(angle) * distance;
+        const ty = y + Math.sin(angle) * distance - Phaser.Math.Between(16, 52);
+        const useRect = Math.random() < 0.65;
+        const particle = useRect
+          ? this.add.rectangle(x, y, size * 1.4, size * 0.9, color, 1)
+          : this.add.circle(x, y, size * 0.7, color, 1);
+
+        particle.setRotation(Phaser.Math.FloatBetween(-0.8, 0.8));
+        particle.setDepth(18);
+
+        this.tweens.add({
+          targets: particle,
+          x: tx,
+          y: ty,
+          alpha: 0,
+          scaleX: 0.15,
+          scaleY: 0.15,
+          rotation: particle.rotation + Phaser.Math.FloatBetween(-3.2, 3.2),
+          duration: Phaser.Math.Between(620, 980),
+          ease: 'Quart.easeOut',
+          onComplete: () => particle.destroy(),
+        });
+      }
+    };
+
+    const flash = this.add.circle(x, y, 14, 0x7dff9e, 0.65);
+    flash.setDepth(17);
+    this.tweens.add({
+      targets: flash,
+      scaleX: 5,
+      scaleY: 5,
+      alpha: 0,
+      duration: 360,
+      ease: 'Cubic.easeOut',
+      onComplete: () => flash.destroy(),
+    });
+
+    const ring = this.add.circle(x, y, 10, 0x000000, 0);
+    ring.setStrokeStyle(4, 0x2ecc71, 0.95);
+    ring.setDepth(17);
+    this.tweens.add({
+      targets: ring,
+      scaleX: 4.8,
+      scaleY: 4.8,
+      alpha: 0,
+      duration: 460,
+      ease: 'Sine.easeOut',
+      onComplete: () => ring.destroy(),
+    });
+
+    emitWave(34, 46, 130);
+    this.time.delayedCall(90, () => emitWave(24, 42, 112));
+    this.cameras.main.shake(110, 0.0016, true);
   }
   
   private spawnNumber(): void {
@@ -458,7 +565,7 @@ export class GameScene extends Phaser.Scene {
 
     // Numbers collected
     const numStr = LevelStatsStorage.formatNumbers(this.collectedNumbers);
-    const numLine = this.add.text(w / 2, h * 0.58, numStr, {
+    const numLine = this.add.text(w / 2, h * 0.63, numStr, {
       fontSize: '14px',
       fontFamily: GAME_FONT,
       color: '#bdc3c7',
@@ -471,7 +578,7 @@ export class GameScene extends Phaser.Scene {
     numLine.setDepth(51);
 
     // Sum line
-    const sumLine = this.add.text(w / 2, h * 0.65, `= ${this.targetTotal}`, {
+    const sumLine = this.add.text(w / 2, h * 0.73, `= ${this.targetTotal}`, {
       fontSize: '22px',
       fontFamily: GAME_FONT,
       color: '#1abc9c',
