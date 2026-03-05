@@ -25,6 +25,7 @@ function appendScriptOnce(src: string, attrs: Record<string, string> = {}): void
 export function initGoogleIntegrations(): void {
   const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim();
   const adsenseClient = import.meta.env.VITE_ADSENSE_CLIENT?.trim();
+  const isDev = import.meta.env.DEV;
 
   if (gaMeasurementId) {
     appendScriptOnce(`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`);
@@ -41,6 +42,12 @@ export function initGoogleIntegrations(): void {
       viewport_width: window.innerWidth,
       viewport_height: window.innerHeight,
     });
+
+    if (isDev) {
+      console.info('[analytics] GA4 enabled', { measurementId: gaMeasurementId });
+    }
+  } else if (isDev) {
+    console.info('[analytics] GA4 disabled. Set VITE_GA_MEASUREMENT_ID to enable tracking.');
   }
 
   if (adsenseClient) {
