@@ -1,3 +1,5 @@
+import { persistGetItem, persistSetItem } from '../core/persistentStorage';
+
 export class UiSfx {
   private static readonly MUSIC_ENABLED_KEY = 'accumulator.musicEnabled';
   private static audioContext: AudioContext | null = null;
@@ -42,7 +44,7 @@ export class UiSfx {
     }
 
     try {
-      const saved = window.localStorage.getItem(this.MUSIC_ENABLED_KEY);
+      const saved = persistGetItem(this.MUSIC_ENABLED_KEY);
       if (saved === null) {
         return true;
       }
@@ -115,7 +117,7 @@ export class UiSfx {
     }
 
     try {
-      window.localStorage.setItem(this.MUSIC_ENABLED_KEY, enabled ? '1' : '0');
+      persistSetItem(this.MUSIC_ENABLED_KEY, enabled ? '1' : '0');
     } catch {
       // Ignore storage failures
     }

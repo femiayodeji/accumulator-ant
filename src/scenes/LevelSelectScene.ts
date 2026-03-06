@@ -4,6 +4,7 @@ import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
 import { trackEvent, trackScreenView } from '../analytics/telemetry';
 import { registerSceneBackNavigation } from '../navigation/backNavigation';
+import { persistGetItem } from '../core/persistentStorage';
 
 export class LevelSelectScene extends Phaser.Scene {
   private static readonly LEVEL_KEY = 'accumulator.currentLevel';
@@ -186,11 +187,11 @@ export class LevelSelectScene extends Phaser.Scene {
 
   private getSavedLevel(): number {
     try {
-      const maxSaved = window.localStorage.getItem(LevelSelectScene.MAX_LEVEL_KEY);
+      const maxSaved = persistGetItem(LevelSelectScene.MAX_LEVEL_KEY);
       const maxParsed = Number(maxSaved);
       if (Number.isInteger(maxParsed) && maxParsed >= 1) return maxParsed;
 
-      const currentSaved = window.localStorage.getItem(LevelSelectScene.LEVEL_KEY);
+      const currentSaved = persistGetItem(LevelSelectScene.LEVEL_KEY);
       const currentParsed = Number(currentSaved);
       if (Number.isInteger(currentParsed) && currentParsed >= 1) return currentParsed;
     } catch { /* ignore */ }

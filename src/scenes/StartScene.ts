@@ -4,6 +4,7 @@ import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
 import { trackEvent, trackScreenView } from '../analytics/telemetry';
 import { registerSceneBackNavigation } from '../navigation/backNavigation';
+import { persistGetItem, persistSetItem } from '../core/persistentStorage';
 
 export class StartScene extends Phaser.Scene {
   private static readonly LEVEL_KEY = 'accumulator.currentLevel';
@@ -180,7 +181,7 @@ export class StartScene extends Phaser.Scene {
 
   private saveCurrentLevel(level: number): void {
     try {
-      window.localStorage.setItem(StartScene.LEVEL_KEY, String(level));
+      persistSetItem(StartScene.LEVEL_KEY, String(level));
     } catch {
       // Ignore storage failures
     }
@@ -188,7 +189,7 @@ export class StartScene extends Phaser.Scene {
 
   private loadStoredLevel(key: string): number {
     try {
-      const saved = window.localStorage.getItem(key);
+      const saved = persistGetItem(key);
       const parsed = Number(saved);
       if (Number.isInteger(parsed) && parsed >= 1) {
         return parsed;

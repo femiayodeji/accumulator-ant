@@ -7,6 +7,7 @@ import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
 import { trackEvent, trackScreenView } from '../analytics/telemetry';
 import { registerSceneBackNavigation } from '../navigation/backNavigation';
+import { persistGetItem, persistSetItem } from '../core/persistentStorage';
 
 export class GameScene extends Phaser.Scene {
   private static readonly LEVEL_STORAGE_KEY = 'accumulator.currentLevel';
@@ -624,8 +625,8 @@ export class GameScene extends Phaser.Scene {
       const previousCurrent = this.loadCurrentLevel();
       const previousMax = this.loadMaxLevel();
       const highest = Math.max(previousCurrent, previousMax);
-      window.localStorage.setItem(GameScene.MAX_LEVEL_STORAGE_KEY, String(highest));
-      window.localStorage.setItem(GameScene.LEVEL_STORAGE_KEY, String(level));
+      persistSetItem(GameScene.MAX_LEVEL_STORAGE_KEY, String(highest));
+      persistSetItem(GameScene.LEVEL_STORAGE_KEY, String(level));
     } catch {
       // Ignore storage failures (private mode/quota)
     }
@@ -635,7 +636,7 @@ export class GameScene extends Phaser.Scene {
     try {
       const existing = this.loadMaxLevel();
       const highest = Math.max(existing, level);
-      window.localStorage.setItem(GameScene.MAX_LEVEL_STORAGE_KEY, String(highest));
+      persistSetItem(GameScene.MAX_LEVEL_STORAGE_KEY, String(highest));
     } catch {
       // Ignore storage failures (private mode/quota)
     }
@@ -643,7 +644,7 @@ export class GameScene extends Phaser.Scene {
 
   private loadCurrentLevel(): number {
     try {
-      const saved = window.localStorage.getItem(GameScene.LEVEL_STORAGE_KEY);
+      const saved = persistGetItem(GameScene.LEVEL_STORAGE_KEY);
       const parsed = Number(saved);
       if (Number.isInteger(parsed) && parsed >= 1) {
         return parsed;
@@ -657,7 +658,7 @@ export class GameScene extends Phaser.Scene {
 
   private loadMaxLevel(): number {
     try {
-      const saved = window.localStorage.getItem(GameScene.MAX_LEVEL_STORAGE_KEY);
+      const saved = persistGetItem(GameScene.MAX_LEVEL_STORAGE_KEY);
       const parsed = Number(saved);
       if (Number.isInteger(parsed) && parsed >= 1) {
         return parsed;

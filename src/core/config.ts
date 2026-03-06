@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { persistGetItem, persistSetItem } from './persistentStorage';
 
 export const GAME_FONT = 'Fredoka, Arial, sans-serif';
 
@@ -101,7 +102,7 @@ export class LevelStatsStorage {
     }
 
     try {
-      window.localStorage.setItem(this.KEY, JSON.stringify(all));
+      persistSetItem(this.KEY, JSON.stringify(all));
     } catch { /* ignore */ }
 
     return isNewBest;
@@ -114,7 +115,7 @@ export class LevelStatsStorage {
 
   static loadAll(): Record<string, LevelStatsEntry> {
     try {
-      const raw = window.localStorage.getItem(this.KEY);
+      const raw = persistGetItem(this.KEY);
       if (raw) return JSON.parse(raw);
     } catch { /* ignore */ }
     return {};
