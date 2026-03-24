@@ -24,7 +24,7 @@ export const GameConfig = {
   
   // Ant configuration
   ant: {
-    baseSpeed: 230,
+    baseSpeed: 300,
     size: 40,
     startX: 187.5, // Center of screen
     startY: 600,
