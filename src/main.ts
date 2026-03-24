@@ -6,7 +6,6 @@ import { LevelSelectScene } from './scenes/LevelSelectScene';
 import { LevelScene } from './scenes/LevelScene';
 import { GameScene } from './scenes/GameScene';
 import { registerPwa } from './pwa/registerPwa';
-import { initGoogleIntegrations } from './analytics/telemetry';
 import { initPersistentStorage } from './core/persistentStorage';
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -34,7 +33,6 @@ const config: Phaser.Types.Core.GameConfig = {
 };
 
 async function bootstrap(): Promise<void> {
-  initGoogleIntegrations();
   await initPersistentStorage();
   new Phaser.Game(config);
   registerPwa();
