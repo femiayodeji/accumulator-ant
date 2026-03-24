@@ -5,7 +5,7 @@ import { GameSfx } from '../audio/GameSfx';
 import { GAME_FONT, DifficultySystem, LevelStatsStorage } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
-import { trackEvent, trackScreenView } from '../analytics/telemetry';
+
 import { registerSceneBackNavigation } from '../navigation/backNavigation';
 import { persistGetItem, persistSetItem } from '../core/persistentStorage';
 
@@ -48,7 +48,7 @@ export class GameScene extends Phaser.Scene {
   }
   
   create(data?: { level?: number; target?: number }): void {
-    trackScreenView('GameScene');
+    window.gtag && window.gtag('event', 'screen_view', { screen_name: 'GameScene' });
     registerSceneBackNavigation(this, { fallbackScene: 'LevelScene' });
 
     // Gradient background
@@ -172,7 +172,7 @@ export class GameScene extends Phaser.Scene {
     hitZone.on('pointerup', () => {
       UiSfx.unlock();
       UiSfx.playClick();
-      trackEvent('game_quit_clicked', {
+      window.gtag && window.gtag('event', 'game_quit_clicked', {
         level: this.currentLevel,
         current_total: this.currentTotal,
         target_total: this.targetTotal,
@@ -280,7 +280,7 @@ export class GameScene extends Phaser.Scene {
     // Persist latest reachable level
     this.saveCurrentLevel(level);
 
-    trackEvent('level_started', {
+    window.gtag && window.gtag('event', 'level_started', {
       level,
       target_total: this.targetTotal,
       spawn_rate_ms: this.spawnRate,
@@ -343,7 +343,7 @@ export class GameScene extends Phaser.Scene {
 
     const isOverflowing = this.currentTotal > this.targetTotal;
     if (!this.wasOverflowing && isOverflowing) {
-      trackEvent('overflow_entered', {
+      window.gtag && window.gtag('event', 'overflow_entered', {
         level: this.currentLevel,
         current_total: this.currentTotal,
         target_total: this.targetTotal,
@@ -351,7 +351,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.wasOverflowing && !isOverflowing) {
-      trackEvent('overflow_cleared', {
+      window.gtag && window.gtag('event', 'overflow_cleared', {
         level: this.currentLevel,
         current_total: this.currentTotal,
         target_total: this.targetTotal,
@@ -481,7 +481,7 @@ export class GameScene extends Phaser.Scene {
     // Update UI
     this.updateUI();
 
-    trackEvent('number_collected', {
+    window.gtag && window.gtag('event', 'number_collected', {
       level: this.currentLevel,
       value: number.value,
       current_total: this.currentTotal,
@@ -523,7 +523,7 @@ export class GameScene extends Phaser.Scene {
       this.currentLevel, [...this.collectedNumbers], elapsedSec, this.targetTotal,
     );
 
-    trackEvent('level_completed', {
+    window.gtag && window.gtag('event', 'level_completed', {
       level: this.currentLevel,
       elapsed_seconds: elapsedSec,
       number_count: this.collectedNumbers.length,

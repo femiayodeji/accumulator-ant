@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { GAME_FONT } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
-import { trackEvent, trackScreenView } from '../analytics/telemetry';
+
 import { registerSceneBackNavigation } from '../navigation/backNavigation';
 import { persistGetItem } from '../core/persistentStorage';
 
@@ -19,7 +19,7 @@ export class LevelSelectScene extends Phaser.Scene {
     const h = this.scale.height;
     const maxLevel = this.getSavedLevel();
 
-    trackScreenView('LevelSelectScene');
+    window.gtag && window.gtag('event', 'screen_view', { screen_name: 'LevelSelectScene' });
     registerSceneBackNavigation(this, { fallbackScene: 'StartScene' });
 
     this.cameras.main.setBackgroundColor(0x1a252f);
@@ -27,7 +27,7 @@ export class LevelSelectScene extends Phaser.Scene {
 
     // Back button
     this.createNavButton(20, 20, '← BACK', () => {
-      trackEvent('level_select_back_clicked');
+      window.gtag && window.gtag('event', 'level_select_back_clicked');
       startAntsTransition(this, 'StartScene');
     });
 
@@ -52,6 +52,7 @@ export class LevelSelectScene extends Phaser.Scene {
     const gap = 10;
     const totalGridW = cols * cellSize + (cols - 1) * gap;
     const startX = (w - totalGridW) / 2;
+    window.gtag && window.gtag('event', 'screen_view', { screen_name: 'LevelSelectScene' });
 
     const container = this.add.container(0, 0);
     let row = 0;
@@ -60,9 +61,7 @@ export class LevelSelectScene extends Phaser.Scene {
     for (let level = 1; level <= maxLevel; level++) {
       const cx = startX + col * (cellSize + gap) + cellSize / 2;
       const cy = gridTop + row * (cellSize + gap + 16) + cellSize / 2;
-
       this.createLevelTile(container, cx, cy, cellSize, level, maxLevel);
-
       col++;
       if (col >= cols) {
         col = 0;
@@ -162,7 +161,7 @@ export class LevelSelectScene extends Phaser.Scene {
     hitZone.on('pointerup', () => {
       UiSfx.unlock();
       UiSfx.playClick();
-      trackEvent('level_selected', { level });
+      window.gtag && window.gtag('event', 'level_selected', { level });
       startAntsTransition(this, 'GameScene', { level });
     });
   }

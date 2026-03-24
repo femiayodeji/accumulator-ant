@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { trackEvent } from '../analytics/telemetry';
 import { GameConfig } from '../core/config';
 
 type TransitionScene = Phaser.Scene & {
@@ -20,7 +19,7 @@ export function startAntsTransition(
     transitionScene.__antsTransitionActive = false;
   });
 
-  trackEvent('scene_transition', {
+  window.gtag && window.gtag('event', 'scene_transition', {
     from_scene: scene.scene.key,
     to_scene: sceneKey,
   });

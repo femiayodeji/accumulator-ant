@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_FONT } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
-import { trackScreenView } from '../analytics/telemetry';
 
 export class SplashScene extends Phaser.Scene {
   constructor() {
@@ -18,7 +17,7 @@ export class SplashScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
 
-    trackScreenView('SplashScene');
+    window.gtag && window.gtag('event', 'screen_view', { screen_name: 'SplashScene' });
 
     this.cameras.main.setBackgroundColor(0x2c3e50);
 
@@ -77,5 +76,6 @@ export class SplashScene extends Phaser.Scene {
     this.time.delayedCall(2800, () => {
       startAntsTransition(this, 'StartScene');
     });
+      window.gtag && window.gtag('event', 'splash_scene_opened');
   }
 }

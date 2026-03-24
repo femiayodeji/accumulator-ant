@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import { GAME_FONT } from '../core/config';
 import { startAntsTransition } from '../transitions/SceneTransition';
 import { UiSfx } from '../audio/UiSfx';
-import { trackEvent, trackScreenView } from '../analytics/telemetry';
 import { registerSceneBackNavigation } from '../navigation/backNavigation';
 
 export class PhilosophyScene extends Phaser.Scene {
@@ -20,7 +19,7 @@ export class PhilosophyScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
 
-    trackScreenView('PhilosophyScene');
+    window.gtag && window.gtag('event', 'screen_view', { screen_name: 'PhilosophyScene' });
     registerSceneBackNavigation(this, { fallbackScene: 'StartScene' });
 
     this.cameras.main.setBackgroundColor(0x1a252f);
@@ -39,7 +38,7 @@ export class PhilosophyScene extends Phaser.Scene {
     back.on('pointerup', () => {
       UiSfx.unlock();
       UiSfx.playClick();
-      trackEvent('philosophy_back_clicked');
+      window.gtag && window.gtag('event', 'philosophy_back_clicked');
       startAntsTransition(this, 'StartScene');
     });
     back.setDepth(10);
